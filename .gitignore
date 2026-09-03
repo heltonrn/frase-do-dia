@@ -39,3 +39,6 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Credencial do Play Console — nunca versionar
+play-store-service-account.json

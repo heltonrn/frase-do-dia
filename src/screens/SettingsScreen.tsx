@@ -57,7 +57,7 @@ export function SettingsScreen({ onVoltar }: SettingsScreenProps): React.JSX.Ele
               onValueChange={() => void config.alternar()}
               trackColor={{ false: colors.line, true: colors.forest }}
               thumbColor={colors.paper}
-              disabled={!config.carregado}
+              disabled={!config.carregado || !config.suportado}
             />
           </View>
 
@@ -106,6 +106,13 @@ export function SettingsScreen({ onVoltar }: SettingsScreenProps): React.JSX.Ele
             </View>
           </View>
 
+          {!config.suportado && (
+            <Text style={styles.avisoPermissao}>
+              Notificações não funcionam no Expo Go do Android. Use um development build
+              para testar este recurso — no aplicativo publicado funciona normalmente.
+            </Text>
+          )}
+
           {config.permissaoNegada && (
             <Text style={styles.avisoPermissao}>
               A permissão de notificações está desativada. Habilite nas configurações do sistema
@@ -127,7 +134,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: spacing.md + 2,
-    paddingTop: spacing.sm,
+    paddingTop: spacing.lg,
     paddingBottom: spacing.sm + 4,
   },
   titulo: {

@@ -3,6 +3,7 @@ import * as SQLite from 'expo-sqlite';
 const DATABASE_NAME = 'frase_do_dia.db';
 
 let databaseInstance: SQLite.SQLiteDatabase | null = null;
+let databasePromise: Promise<SQLite.SQLiteDatabase> | null = null;
 
 /**
  * Abre (ou reaproveita) a conexão com o banco local e garante que o
@@ -16,12 +17,27 @@ let databaseInstance: SQLite.SQLiteDatabase | null = null;
  * - app_estado:        pares chave/valor para estado geral
  *                      (versão da base instalada, frase do dia,
  *                      data da última frase, configurações).
+ *
+ * IMPORTANTE: a versão anterior desta função só memoizava o resultado
+ * já resolvido (`databaseInstance`). Se duas chamadas chegassem antes
+ * da primeira terminar — algo mais provável logo no cold start, quando
+ * várias partes do app inicializam quase juntas — cada uma abria sua
+ * própria conexão e tentava criar o schema ao mesmo tempo, o que podia
+ * falhar ("database is locked" ou similar). Agora a PROMISE em
+ * andamento também é memoizada, então chamadas concorrentes aguardam a
+ * mesma abertura em vez de disputar o banco.
  */
 export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   if (databaseInstance) {
     return databaseInstance;
   }
+  if (!databasePromise) {
+    databasePromise = abrirEIniciarBanco();
+  }
+  return databasePromise;
+}
 
+async function abrirEIniciarBanco(): Promise<SQLite.SQLiteDatabase> {
   const db = await SQLite.openDatabaseAsync(DATABASE_NAME);
 
   await db.execAsync(`
@@ -58,10 +74,11 @@ export async function getDatabase(): Promise<SQLite.SQLiteDatabase> {
   `);
 
   databaseInstance = db;
-  return databaseInstance;
+  return db;
 }
 
 /** Usado apenas em testes/cenários controlados para reiniciar a conexão. */
 export function resetDatabaseInstanceForTests(): void {
   databaseInstance = null;
+  databasePromise = null;
 }

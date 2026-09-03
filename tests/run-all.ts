@@ -45,15 +45,15 @@ function testesDiff(): void {
   const v2: PhraseBasePackage = {
     versaoBase: 2,
     frases: [
-      ...phrasesPackageV1.frases.map((f) => (f.id === 'frase-020' ? { ...f, ativo: false } : f)),
-      { ...frase('frase-066'), categoria: 'Vida' },
+      ...phrasesPackageV1.frases.map((f) => (f.id === 'frase-030' ? { ...f, ativo: false } : f)),
+      { ...frase('frase-999'), categoria: 'Vida' },
     ],
   };
   const ids = new Set(phrasesPackageV1.frases.map((f) => f.id));
   const ativos = new Map(phrasesPackageV1.frases.map((f) => [f.id, f.ativo]));
   const d2 = diffPhraseBase(v2, ids, ativos);
-  ok(d2.novas.length === 1 && d2.novas[0].id === 'frase-066', 'diff: atualização insere só os ids novos');
-  ok(d2.ativoAlterado.length === 1 && d2.ativoAlterado[0].id === 'frase-020' && !d2.ativoAlterado[0].ativo, 'diff: desativação detectada sem tocar nas demais');
+  ok(d2.novas.length === 1 && d2.novas[0].id === 'frase-999', 'diff: atualização insere só os ids novos');
+  ok(d2.ativoAlterado.length === 1 && d2.ativoAlterado[0].id === 'frase-030' && !d2.ativoAlterado[0].ativo, 'diff: desativação detectada sem tocar nas demais');
 
   const d3 = diffPhraseBase(phrasesPackageV1, ids, ativos);
   ok(d3.novas.length === 0 && d3.ativoAlterado.length === 0, 'diff: reabertura sem mudanças não gera operações');

@@ -4,6 +4,7 @@ import { APP_STATE_KEYS, getAppState, setAppState } from '../database/appStateRe
 import {
   cancelDailyReminder,
   ensureNotificationPermission,
+  isNotificationsSupported,
   scheduleDailyReminder,
 } from '../services/notificationService';
 import { HORARIO_PADRAO, parseHorario } from '../utils/parseHorario';
@@ -15,6 +16,8 @@ export interface NotificationSettings {
   minuto: number;
   /** false quando o usuário negou a permissão do sistema. */
   permissaoNegada: boolean;
+  /** false quando o ambiente não suporta notificações (Expo Go Android). */
+  suportado: boolean;
   alternar(): Promise<void>;
   definirHorario(hora: number, minuto: number): Promise<void>;
 }
@@ -95,5 +98,14 @@ export function useNotificationSettings(): NotificationSettings {
     [ativa],
   );
 
-  return { carregado, ativa, hora, minuto, permissaoNegada, alternar, definirHorario };
+  return {
+    carregado,
+    ativa,
+    hora,
+    minuto,
+    permissaoNegada,
+    suportado: isNotificationsSupported(),
+    alternar,
+    definirHorario,
+  };
 }
