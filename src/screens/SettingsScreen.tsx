@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, StyleSheet, Switch, Text, View } from 'react-native';
 
 import { AdBanner } from '../components/AdBanner';
+import { FeedbackSheet } from '../components/ReviewSheets';
 import { useNotificationSettings } from '../hooks/useNotificationSettings';
+import { FeedbackCategory } from '../services/reviewPolicy';
+import { openStorePage, sendFeedbackEmail } from '../services/reviewService';
 import { colors, fonts, spacing } from '../theme';
 
 interface SettingsScreenProps {
@@ -16,6 +19,22 @@ function formatarHorario(hora: number, minuto: number): string {
 /** Tela de configurações: notificação diária (toggle + horário). */
 export function SettingsScreen({ onVoltar }: SettingsScreenProps): React.JSX.Element {
   const config = useNotificationSettings();
+  const [mostrarSugestao, setMostrarSugestao] = useState(false);
+  const [aviso, setAviso] = useState<string | null>(null);
+
+  async function abrirLoja(): Promise<void> {
+    try {
+      await openStorePage();
+    } catch {
+      setAviso('Não foi possível abrir a loja agora.');
+    }
+  }
+
+  async function enviarSugestao(categoria: FeedbackCategory, mensagem: string): Promise<void> {
+    await sendFeedbackEmail(categoria, mensagem);
+    setMostrarSugestao(false);
+    setAviso('Obrigado pela sugestão!');
+  }
 
   const mudarHora = (delta: number): void => {
     const novaHora = (config.hora + delta + 24) % 24;
@@ -120,9 +139,37 @@ export function SettingsScreen({ onVoltar }: SettingsScreenProps): React.JSX.Ele
             </Text>
           )}
         </View>
+
+        <View style={[styles.card, styles.cardSobre]}>
+          <Text style={styles.cardTitulo}>Sobre o Frase do Dia</Text>
+          <Text style={styles.linhaSubtitulo}>
+            Gostando do app? Sua avaliação ajuda muito. Tem uma ideia? Conte para a gente.
+          </Text>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => void abrirLoja()}
+            style={({ pressed }) => [styles.botaoSobre, pressed && styles.botaoSobrePressionado]}
+          >
+            <Text style={styles.botaoSobreTexto}>★ Avaliar o Frase do Dia</Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => setMostrarSugestao(true)}
+            style={({ pressed }) => [styles.botaoSobre, pressed && styles.botaoSobrePressionado]}
+          >
+            <Text style={styles.botaoSobreTexto}>✉ Enviar sugestão</Text>
+          </Pressable>
+          {aviso ? <Text style={styles.avisoSobre}>{aviso}</Text> : null}
+        </View>
       </View>
 
       <AdBanner />
+
+      <FeedbackSheet
+        onCancel={() => setMostrarSugestao(false)}
+        onSend={enviarSugestao}
+        visible={mostrarSugestao}
+      />
     </View>
   );
 }
@@ -229,6 +276,31 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemiBold,
     fontSize: 11.5,
     color: colors.forestDark,
+  },
+  cardSobre: {
+    marginTop: spacing.md,
+    gap: spacing.sm,
+  },
+  botaoSobre: {
+    alignItems: 'center',
+    backgroundColor: colors.forestLight,
+    borderRadius: 12,
+    justifyContent: 'center',
+    minHeight: 44,
+  },
+  botaoSobrePressionado: {
+    opacity: 0.7,
+  },
+  botaoSobreTexto: {
+    fontFamily: fonts.bodySemiBold,
+    fontSize: 14,
+    color: colors.forestDark,
+  },
+  avisoSobre: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: 12,
+    color: colors.forestDark,
+    textAlign: 'center',
   },
   avisoPermissao: {
     fontFamily: fonts.body,

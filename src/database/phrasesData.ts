@@ -9,12 +9,16 @@ import { Phrase, PhraseBasePackage } from '../types/Phrase';
  * - "Autor desconhecido" é usado quando não há confirmação segura;
  * - nenhum conteúdo ofensivo, discriminatório ou inadequado.
  *
- * Este arquivo é o pacote v1 (168 frases: 65 da curadoria inicial
- * + 103 fornecidas pelo produto, já deduplicadas). Uma futura atualização de
- * conteúdo deve criar um novo array (ex: phrasesData.v2.ts) somando
- * frases com ids novos aos ids já existentes — nunca reescrevendo um
- * id já publicado. Ver src/services/phraseSyncService.ts (Fase 3) para
- * a lógica de merge com o banco local.
+ * Pacote de conteúdo versão 4 (`versaoBase: 4`), com 239 frases:
+ * - frase-001 a frase-169: base v1 (65 da curadoria inicial + 104
+ *   fornecidas pelo produto, já deduplicadas);
+ * - frase-170 a frase-208: 39 frases de pensadores, filósofos e escritores;
+ * - frase-209 a frase-230: 22 novas frases candidatas de autores reconhecidos;
+ * - frase-231 a frase-239: 9 frases de figuras religiosas e espirituais.
+ *
+ * Futuras atualizações devem somar frases com ids novos e subir
+ * `versaoBase` — nunca reescrever um id já publicado. Ver
+ * src/services/phraseSyncService.ts para a lógica de merge com o banco local.
  */
 const frases: Phrase[] = [
   { id: 'frase-001', texto: 'A jornada de mil quilômetros começa com um único passo.', autor: 'Lao Tsé', categoria: 'Persistência', ativo: true },
@@ -186,10 +190,80 @@ const frases: Phrase[] = [
   { id: 'frase-167', texto: 'Nunca é desperdício fazer o bem.', autor: 'Autor desconhecido', categoria: 'Relacionamentos', ativo: true },
   { id: 'frase-168', texto: 'Às vezes, tudo o que alguém precisa é saber que não está sozinho.', autor: 'Autor desconhecido', categoria: 'Relacionamentos', ativo: true },
   { id: 'frase-169', texto: 'Deixe cada lugar um pouco melhor do que encontrou.', autor: 'Autor desconhecido', categoria: 'Relacionamentos', ativo: true },
+  { id: 'frase-170', texto: 'Não é porque as coisas são difíceis que não ousamos; é porque não ousamos que elas são difíceis.', autor: 'Sêneca', categoria: 'Coragem', ativo: true },
+  { id: 'frase-171', texto: 'Enquanto vivemos, aprendamos a viver.', autor: 'Sêneca', categoria: 'Vida', ativo: true },
+  { id: 'frase-172', texto: 'Sofremos mais na imaginação do que na realidade.', autor: 'Sêneca', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-173', texto: 'O obstáculo no caminho torna-se o caminho.', autor: 'Marco Aurélio', categoria: 'Superação', ativo: true },
+  { id: 'frase-174', texto: 'A alma é tingida pela cor dos seus pensamentos.', autor: 'Marco Aurélio', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-175', texto: 'Primeiro diga a si mesmo o que você quer ser; depois faça o que tem de fazer.', autor: 'Epicteto', categoria: 'Disciplina', ativo: true },
+  { id: 'frase-176', texto: 'O princípio é a metade de tudo.', autor: 'Platão', categoria: 'Motivação', ativo: true },
+  { id: 'frase-177', texto: 'A esperança é o sonho do homem acordado.', autor: 'Aristóteles', categoria: 'Felicidade', ativo: true },
+  { id: 'frase-178', texto: 'A educação tem raízes amargas, mas os seus frutos são doces.', autor: 'Aristóteles', categoria: 'Estudos', ativo: true },
+  { id: 'frase-179', texto: 'Uma vida não examinada não vale a pena ser vivida.', autor: 'Sócrates', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-180', texto: 'Aprender sem refletir é perda de tempo; refletir sem aprender é perigoso.', autor: 'Confúcio', categoria: 'Estudos', ativo: true },
+  { id: 'frase-181', texto: 'O homem superior é modesto no falar, mas excede nas ações.', autor: 'Confúcio', categoria: 'Sabedoria', ativo: true },
+  { id: 'frase-182', texto: 'Quem conhece os outros é sábio; quem conhece a si mesmo é iluminado.', autor: 'Lao Tsé', categoria: 'Sabedoria', ativo: true },
+  { id: 'frase-183', texto: 'Quem sabe que tem o bastante é rico.', autor: 'Lao Tsé', categoria: 'Gratidão', ativo: true },
+  { id: 'frase-184', texto: 'Ninguém se banha duas vezes no mesmo rio.', autor: 'Heráclito', categoria: 'Vida', ativo: true },
+  { id: 'frase-185', texto: 'Nada é suficiente para quem o suficiente é pouco.', autor: 'Epicuro', categoria: 'Gratidão', ativo: true },
+  { id: 'frase-186', texto: 'A gratidão não é apenas a maior das virtudes, mas a mãe de todas as outras.', autor: 'Cícero', categoria: 'Gratidão', ativo: true },
+  { id: 'frase-187', texto: 'Não basta ter bom espírito; o principal é aplicá-lo bem.', autor: 'René Descartes', categoria: 'Foco', ativo: true },
+  { id: 'frase-188', texto: 'O coração tem razões que a própria razão desconhece.', autor: 'Blaise Pascal', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-189', texto: 'A maior coisa do mundo é saber pertencer a si mesmo.', autor: 'Michel de Montaigne', categoria: 'Sabedoria', ativo: true },
+  { id: 'frase-190', texto: 'A dúvida não é uma condição agradável, mas a certeza é absurda.', autor: 'Voltaire', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-191', texto: 'Ouse saber! Tenha coragem de usar o seu próprio entendimento.', autor: 'Immanuel Kant', categoria: 'Coragem', ativo: true },
+  { id: 'frase-192', texto: 'Aquilo que não me mata me fortalece.', autor: 'Friedrich Nietzsche', categoria: 'Superação', ativo: true },
+  { id: 'frase-193', texto: 'Não basta saber, é preciso também aplicar; não basta querer, é preciso também agir.', autor: 'Johann Wolfgang von Goethe', categoria: 'Disciplina', ativo: true },
+  { id: 'frase-194', texto: 'Nada de grandioso jamais foi realizado sem entusiasmo.', autor: 'Ralph Waldo Emerson', categoria: 'Sucesso', ativo: true },
+  { id: 'frase-195', texto: 'O segredo da existência humana não está só em viver, mas em saber para que se vive.', autor: 'Fiódor Dostoiévski', categoria: 'Vida', ativo: true },
+  { id: 'frase-196', texto: 'Quem lê muito e anda muito, vê muito e sabe muito.', autor: 'Miguel de Cervantes', categoria: 'Estudos', ativo: true },
+  { id: 'frase-197', texto: 'Nossas dúvidas são traidoras e nos fazem perder o bem que poderíamos conquistar, por simples medo de tentar.', autor: 'William Shakespeare', categoria: 'Coragem', ativo: true },
+  { id: 'frase-198', texto: 'Mudam-se os tempos, mudam-se as vontades.', autor: 'Luís de Camões', categoria: 'Vida', ativo: true },
+  { id: 'frase-199', texto: 'Foi o tempo que você dedicou à sua rosa que a fez tão importante.', autor: 'Antoine de Saint-Exupéry', categoria: 'Relacionamentos', ativo: true },
+  { id: 'frase-200', texto: 'Aquele que abre uma porta de escola fecha uma prisão.', autor: 'Victor Hugo', categoria: 'Estudos', ativo: true },
+  { id: 'frase-201', texto: 'Tudo vale a pena se a alma não é pequena.', autor: 'Fernando Pessoa', categoria: 'Superação', ativo: true },
+  { id: 'frase-202', texto: 'O que a vida quer da gente é coragem.', autor: 'João Guimarães Rosa', categoria: 'Coragem', ativo: true },
+  { id: 'frase-203', texto: 'Mestre não é quem sempre ensina, mas quem de repente aprende.', autor: 'João Guimarães Rosa', categoria: 'Estudos', ativo: true },
+  { id: 'frase-204', texto: 'Ensinar não é transferir conhecimento, mas criar as possibilidades para a sua produção ou a sua construção.', autor: 'Paulo Freire', categoria: 'Estudos', ativo: true },
+  { id: 'frase-205', texto: 'Ninguém educa ninguém, ninguém educa a si mesmo; os homens se educam entre si, mediatizados pelo mundo.', autor: 'Paulo Freire', categoria: 'Estudos', ativo: true },
+  { id: 'frase-206', texto: 'A vida é a arte do encontro, embora haja tanto desencontro pela vida.', autor: 'Vinicius de Moraes', categoria: 'Relacionamentos', ativo: true },
+  { id: 'frase-207', texto: 'Lutar com palavras é a luta mais vã. Entanto lutamos mal rompe a manhã.', autor: 'Carlos Drummond de Andrade', categoria: 'Persistência', ativo: true },
+  { id: 'frase-208', texto: 'Quem pouco pensa, muito erra.', autor: 'Leonardo da Vinci', categoria: 'Foco', ativo: true },
+  { id: 'frase-209', texto: 'A vida feliz consiste na tranquilidade da mente.', autor: 'Sêneca', categoria: 'Felicidade', ativo: true },
+  { id: 'frase-210', texto: 'O desejo de conhecimento nasce naturalmente em todos os seres humanos.', autor: 'Aristóteles', categoria: 'Estudos', ativo: true },
+  { id: 'frase-211', texto: 'A liberdade consiste em ser senhor da própria vontade.', autor: 'Epicteto', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-212', texto: 'A dificuldade fortalece a mente, assim como o trabalho fortalece o corpo.', autor: 'Sêneca', categoria: 'Superação', ativo: true },
+  { id: 'frase-213', texto: 'Aquele que conquista os outros é forte; aquele que conquista a si mesmo é poderoso.', autor: 'Lao Tsé', categoria: 'Autoconhecimento', ativo: true },
+  { id: 'frase-214', texto: 'A excelência moral resulta do hábito.', autor: 'Aristóteles', categoria: 'Disciplina', ativo: true },
+  { id: 'frase-215', texto: 'É fazendo que aprendemos a fazer aquilo que devemos aprender a fazer.', autor: 'Aristóteles', categoria: 'Estudos', ativo: true },
+  { id: 'frase-216', texto: 'A imaginação é mais importante que o conhecimento.', autor: 'Albert Einstein', categoria: 'Criatividade', ativo: true },
+  { id: 'frase-217', texto: 'A curiosidade é uma das características mais permanentes e certas de um intelecto vigoroso.', autor: 'Samuel Johnson', categoria: 'Estudos', ativo: true },
+  { id: 'frase-218', texto: 'Não é que tenhamos pouco tempo, mas que perdemos muito dele.', autor: 'Sêneca', categoria: 'Vida', ativo: true },
+  { id: 'frase-219', texto: 'A vida deve ser compreendida olhando para trás, mas deve ser vivida olhando para a frente.', autor: 'Søren Kierkegaard', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-220', texto: 'A amizade é uma alma que habita dois corpos.', autor: 'Aristóteles', categoria: 'Relacionamentos', ativo: true },
+  { id: 'frase-221', texto: 'O homem está condenado a ser livre.', autor: 'Jean-Paul Sartre', categoria: 'Liberdade', ativo: true },
+  { id: 'frase-222', texto: 'O único modo de ter um amigo é ser um.', autor: 'Ralph Waldo Emerson', categoria: 'Relacionamentos', ativo: true },
+  { id: 'frase-223', texto: 'Não sou um pássaro; nenhuma rede me prende: sou um ser humano livre, com vontade independente.', autor: 'Charlotte Brontë', categoria: 'Liberdade', ativo: true },
+  { id: 'frase-224', texto: 'A única recompensa da virtude é a própria virtude.', autor: 'Ralph Waldo Emerson', categoria: 'Ética', ativo: true },
+  { id: 'frase-225', texto: 'O tecido da nossa vida é feito de fios misturados, bons e maus.', autor: 'William Shakespeare', categoria: 'Vida', ativo: true },
+  { id: 'frase-226', texto: 'Nenhum homem é uma ilha, completo em si mesmo.', autor: 'John Donne', categoria: 'Relacionamentos', ativo: true },
+  { id: 'frase-227', texto: 'Não há encanto igual à ternura do coração.', autor: 'Jane Austen', categoria: 'Gentileza', ativo: true },
+  { id: 'frase-228', texto: 'Não são as estrelas que determinam nosso destino, mas nós mesmos.', autor: 'William Shakespeare', categoria: 'Escolhas', ativo: true },
+  { id: 'frase-229', texto: 'Cuidado: sou destemido e, por isso, poderoso.', autor: 'Mary Shelley', categoria: 'Coragem', ativo: true },
+  { id: 'frase-230', texto: 'A leitura é uma conversa com as melhores mentes dos séculos passados.', autor: 'René Descartes', categoria: 'Estudos', ativo: true },
+  { id: 'frase-231', texto: 'Amarás o teu próximo como a ti mesmo.', autor: 'Jesus', categoria: 'Relacionamentos', ativo: true },
+  { id: 'frase-232', texto: 'Bem-aventurados os misericordiosos, porque alcançarão misericórdia.', autor: 'Jesus', categoria: 'Compaixão', ativo: true },
+  { id: 'frase-233', texto: 'Onde estiver o vosso tesouro, aí estará também o vosso coração.', autor: 'Jesus', categoria: 'Reflexão', ativo: true },
+  { id: 'frase-234', texto: 'Ainda que eu falasse as línguas dos homens e dos anjos, se não tivesse amor, seria como o metal que soa.', autor: 'Apóstolo Paulo', categoria: 'Amor', ativo: true },
+  { id: 'frase-235', texto: 'Ama e faz o que quiseres.', autor: 'Santo Agostinho', categoria: 'Amor', ativo: true },
+  { id: 'frase-236', texto: 'A escuridão não pode expulsar a escuridão; somente a luz pode fazer isso.', autor: 'Martin Luther King Jr.', categoria: 'Paz', ativo: true },
+  { id: 'frase-237', texto: 'O objeto do amor não é a forma, seja o amor por este mundo ou pelo outro.', autor: 'Rumi', categoria: 'Espiritualidade', ativo: true },
+  { id: 'frase-238', texto: 'A paz que anunciais com a boca, mais deveis tê-la em vossos corações.', autor: 'São Francisco de Assis', categoria: 'Paz', ativo: true },
+  { id: 'frase-239', texto: 'A religião do amor é distinta de todas as outras.', autor: 'Rumi', categoria: 'Espiritualidade', ativo: true },
 ];
 
 export const phrasesPackageV1: PhraseBasePackage = {
-  versaoBase: 1,
+  versaoBase: 4,
   frases,
 };
 

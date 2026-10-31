@@ -12,8 +12,18 @@ import { runDailyPhraseEngine } from '../src/services/dailyPhraseEngine';
 import { Phrase, PhraseBasePackage } from '../src/types/Phrase';
 import { getTodayLocalDateString } from '../src/utils/dateUtils';
 import { diffPhraseBase } from '../src/utils/diffPhraseBase';
-import { formatPhraseForSharing } from '../src/utils/formatPhraseForSharing';
+import { ASSINATURA_APP, formatPhraseForSharing } from '../src/utils/formatPhraseForSharing';
 import { parseHorario } from '../src/utils/parseHorario';
+import {
+  buildFeedbackMailtoUrl,
+  getReviewStateAfterAnswer,
+  parseStoredTimestamp,
+  REVIEW_FEEDBACK_COOLDOWN_DAYS,
+  REVIEW_FEEDBACK_EMAIL,
+  REVIEW_SNOOZE_DAYS,
+  ReviewEligibilityInput,
+  shouldPromptReview,
+} from '../src/services/reviewPolicy';
 import { validatePhraseBase } from '../src/utils/validatePhraseBase';
 import { phrasesPackageV1 } from '../src/database/phrasesData';
 import { criarFakes, frase } from './fakes';
@@ -120,7 +130,7 @@ function testesCompartilhamento(): void {
     categoria: 'Persistência',
     ativo: true,
   };
-  const esperado = '\u201CA jornada de mil quilômetros começa com um único passo.\u201D\n\n\u2014 Lao Tsé';
+  const esperado = '\u201CA jornada de mil quilômetros começa com um único passo.\u201D\n\n\u2014 Lao Tsé\n\n' + ASSINATURA_APP;
   ok(formatPhraseForSharing(exemplo) === esperado, 'compartilhamento: formato conforme a seção 8 do MD');
 }
 
@@ -140,6 +150,71 @@ function testesData(): void {
   ok(getTodayLocalDateString(new Date(2026, 11, 31)) === '2026-12-31', 'data: dezembro correto (mês 1-based na saída)');
 }
 
+function testesAvaliacao(): void {
+  const agora = new Date('2026-10-21T12:00:00.000Z');
+  const dia = 86_400_000;
+  const elegivel: ReviewEligibilityInput = {
+    firstUseDate: '2026-10-10',
+    daysOfUse: 6,
+    reviewCompleted: false,
+    reviewSnoozeCount: 0,
+    reviewNextPromptAt: null,
+    phraseShownToday: true,
+  };
+
+  ok(shouldPromptReview(elegivel, agora), 'avaliação: aparece quando todas as condições são atendidas');
+  ok(!shouldPromptReview({ ...elegivel, phraseShownToday: false }, agora), 'avaliação: só com a frase na tela');
+  ok(!shouldPromptReview({ ...elegivel, firstUseDate: null }, agora), 'avaliação: sem uso registrado não aparece');
+  ok(!shouldPromptReview({ ...elegivel, firstUseDate: '2026-10-17' }, agora), 'avaliação: espera 7 dias desde o primeiro uso');
+  ok(!shouldPromptReview({ ...elegivel, daysOfUse: 4 }, agora), 'avaliação: exige 5 dias de uso');
+  ok(
+    !shouldPromptReview({ ...elegivel, reviewNextPromptAt: '2026-11-01T00:00:00.000Z' }, agora) &&
+      shouldPromptReview({ ...elegivel, reviewNextPromptAt: '2026-10-21T11:00:00.000Z' }, agora),
+    'avaliação: respeita a data do próximo pedido e libera depois dela',
+  );
+  ok(
+    !shouldPromptReview({ ...elegivel, reviewCompleted: true }, agora) &&
+      !shouldPromptReview({ ...elegivel, reviewSnoozeCount: 3 }, agora),
+    'avaliação: nunca mais pergunta após avaliar ou após 3 adiamentos',
+  );
+  ok(
+    parseStoredTimestamp('2026-10-01 12:00:00') === Date.parse('2026-10-01T12:00:00Z') &&
+      parseStoredTimestamp('não é data') === null,
+    'avaliação: interpreta datas salvas e rejeita texto inválido',
+  );
+
+  const sim = getReviewStateAfterAnswer('yes', 1, agora);
+  ok(sim.reviewCompleted === true && sim.reviewNextPromptAt === null, 'avaliação: "sim" conclui o pedido');
+  const depois = getReviewStateAfterAnswer('later', 1, agora);
+  ok(
+    depois.reviewSnoozeCount === 2 &&
+      depois.reviewNextPromptAt === new Date(agora.getTime() + REVIEW_SNOOZE_DAYS * dia).toISOString(),
+    'avaliação: "agora não" adia 30 dias e conta o adiamento',
+  );
+  const melhorar = getReviewStateAfterAnswer('improve', 1, agora);
+  ok(
+    melhorar.reviewSnoozeCount === undefined &&
+      melhorar.reviewNextPromptAt === new Date(agora.getTime() + REVIEW_FEEDBACK_COOLDOWN_DAYS * dia).toISOString(),
+    'avaliação: "pode melhorar" aguarda 60 dias sem contar adiamento',
+  );
+
+  const url = buildFeedbackMailtoUrl({
+    category: 'Frases',
+    message: 'Mais frases de poetas & escritores.',
+    appVersion: '1.0.0',
+    platform: 'android',
+    osVersion: '35',
+  });
+  const consulta = new URLSearchParams(url.slice(url.indexOf('?') + 1));
+  ok(
+    url.startsWith(`mailto:${REVIEW_FEEDBACK_EMAIL}?subject=`) &&
+      consulta.get('subject') === 'Sugestão — Frase do Dia (Frases)' &&
+      (consulta.get('body') ?? '').includes('Mais frases de poetas & escritores.') &&
+      (consulta.get('body') ?? '').includes('Frase do Dia 1.0.0 · android 35'),
+    'avaliação: mailto com assunto, mensagem e dados do app codificados',
+  );
+}
+
 async function main(): Promise<void> {
   await testesBaseDeFrases();
   testesDiff();
@@ -147,6 +222,7 @@ async function main(): Promise<void> {
   testesCompartilhamento();
   testesHorario();
   testesData();
+  testesAvaliacao();
   console.log(`\n${total} verificações passaram.`);
 }
 

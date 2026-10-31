@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AdBanner } from '../components/AdBanner';
 import { PhraseCard } from '../components/PhraseCard';
+import { ReviewPromptCard } from '../components/ReviewPromptCard';
+import { FeedbackSheet, StoreReviewSheet } from '../components/ReviewSheets';
 import { useDailyPhrase } from '../hooks/useDailyPhrase';
+import { useReviewPrompt } from '../hooks/useReviewPrompt';
+import { FeedbackCategory, ReviewAnswer } from '../services/reviewPolicy';
+import { requestStoreReview, sendFeedbackEmail } from '../services/reviewService';
 import { sharePhrase } from '../services/sharingService';
 import { colors, fonts, spacing } from '../theme';
 
@@ -23,6 +28,24 @@ interface HomeScreenProps {
 /** Tela principal: exibe a frase do dia. */
 export function HomeScreen({ onAbrirConfiguracoes }: HomeScreenProps): React.JSX.Element {
   const estado = useDailyPhrase();
+  const avaliacao = useReviewPrompt(estado.status === 'ok');
+  const [folhaAvaliacao, setFolhaAvaliacao] = useState<'loja' | 'sugestao' | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
+
+  function responderAvaliacao(resposta: ReviewAnswer): void {
+    void avaliacao.responder(resposta);
+    if (resposta === 'yes') {
+      setFolhaAvaliacao('loja');
+    } else if (resposta === 'improve') {
+      setFolhaAvaliacao('sugestao');
+    }
+  }
+
+  async function enviarSugestao(categoria: FeedbackCategory, mensagem: string): Promise<void> {
+    await sendFeedbackEmail(categoria, mensagem);
+    setFolhaAvaliacao(null);
+    setAviso('Obrigado pela sugestão!');
+  }
 
   return (
     <View style={styles.container}>
@@ -73,7 +96,32 @@ export function HomeScreen({ onAbrirConfiguracoes }: HomeScreenProps): React.JSX
         )}
       </View>
 
+      {aviso ? <Text style={styles.aviso}>{aviso}</Text> : null}
+      {avaliacao.visivel ? (
+        <ReviewPromptCard
+          onImprove={() => responderAvaliacao('improve')}
+          onLater={() => responderAvaliacao('later')}
+          onYes={() => responderAvaliacao('yes')}
+        />
+      ) : null}
+
       <AdBanner />
+
+      <StoreReviewSheet
+        onConfirm={() => {
+          setFolhaAvaliacao(null);
+          void requestStoreReview().catch(() => {
+            setAviso('Não foi possível abrir a loja agora.');
+          });
+        }}
+        onDismiss={() => setFolhaAvaliacao(null)}
+        visible={folhaAvaliacao === 'loja'}
+      />
+      <FeedbackSheet
+        onCancel={() => setFolhaAvaliacao(null)}
+        onSend={enviarSugestao}
+        visible={folhaAvaliacao === 'sugestao'}
+      />
     </View>
   );
 }
@@ -142,6 +190,13 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodySemiBold,
     fontSize: 14.5,
     color: colors.paper,
+  },
+  aviso: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: 12.5,
+    color: colors.forestDark,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
   },
   mensagem: {
     fontFamily: fonts.bodyMedium,

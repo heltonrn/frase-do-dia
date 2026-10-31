@@ -19,7 +19,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "br.com.volvet.frasedodia.app",
+      "package": "br.com.volvet.frase",
       "versionCode": 1
     },
     "web": {
@@ -40,9 +40,17 @@
           "imageWidth": 200,
           "backgroundColor": "#FAF6EE"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-sqlite"
     ],
     "primaryColor": "#2B6E52",
-    "backgroundColor": "#FAF6EE"
+    "backgroundColor": "#FAF6EE",
+    "extra": {
+      "eas": {
+        "projectId": "5740e752-e17b-4e38-b381-e40efe9b17b8"
+      }
+    },
+    "owner": "heltonrn"
   }
 }

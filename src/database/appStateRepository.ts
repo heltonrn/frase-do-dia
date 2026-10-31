@@ -10,6 +10,9 @@ export const APP_STATE_KEYS = {
   idFraseDoDia: 'id_frase_do_dia',
   notificacaoAtiva: 'notificacao_ativa',
   notificacaoHorario: 'notificacao_horario',
+  avaliacaoConcluida: 'avaliacao_concluida',
+  avaliacaoAdiamentos: 'avaliacao_adiamentos',
+  avaliacaoProximoPedidoEm: 'avaliacao_proximo_pedido_em',
 } as const;
 
 export type AppStateKey = (typeof APP_STATE_KEYS)[keyof typeof APP_STATE_KEYS];
