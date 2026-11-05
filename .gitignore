@@ -40,5 +40,3 @@ yarn-error.*
 /ios
 /android
 
-# Credencial do Play Console — nunca versionar
-play-store-service-account.json
